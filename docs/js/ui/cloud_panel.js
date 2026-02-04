@@ -75,7 +75,7 @@ export class CloudPanel {
             };
         } else {
             header.innerHTML = `
-                <button class="secondary-btn mini" id="show-login-btn">Login / Register</button>
+                <button class="secondary-btn mini" id="show-login-btn">Login</button>
             `;
             document.getElementById('show-login-btn').onclick = () => {
                 document.getElementById('auth-modal').classList.add('active');

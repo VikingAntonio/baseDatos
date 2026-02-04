@@ -35,7 +35,6 @@ export class CloudPanel {
     initAuth() {
         const modal = document.getElementById('auth-modal');
         const loginBtn = document.getElementById('login-submit-btn');
-        const registerBtn = document.getElementById('register-submit-btn');
         const cancelBtn = document.getElementById('login-cancel-btn');
         const usernameInput = document.getElementById('username');
         const passwordInput = document.getElementById('password');
@@ -64,27 +63,6 @@ export class CloudPanel {
                 this.refreshCloudProjects();
             }
         };
-
-        if (registerBtn) {
-            registerBtn.onclick = async () => {
-                const username = usernameInput.value;
-                const password = passwordInput.value;
-                if (!username || !password) {
-                    notifications.show('Fill all fields', 'error');
-                    return;
-                }
-
-                const { error } = await this.supabase.register(username, password);
-                if (error) {
-                    notifications.show('Registration failed: ' + error.message, 'error');
-                } else {
-                    modal.classList.remove('active');
-                    notifications.show('Registration successful', 'success');
-                    this.updateUserHeader();
-                    this.refreshCloudProjects();
-                }
-            };
-        }
     }
 
     updateUserHeader() {

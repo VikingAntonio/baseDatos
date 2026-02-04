@@ -15,7 +15,7 @@ You can find the necessary SQL in the following files:
 1. **bdd_users**:
     - `id`: UUID (Primary Key)
     - `username`: TEXT (Unique)
-    - `password`: TEXT (SHA-256 Hash)
+    - `password`: TEXT (Plain Text)
     - `created_at`: TIMESTAMPTZ
 
 2. **projects**:

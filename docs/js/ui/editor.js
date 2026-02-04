@@ -3,6 +3,7 @@ import { MySQLGenerator } from '../generators/mysql.js';
 import { PostgresGenerator } from '../generators/postgres.js';
 import { StandardSQLGenerator } from '../generators/standard.js';
 import { SQLParser } from '../utils/sql_parser.js';
+import { notifications } from '../utils/notifications.js';
 
 export class SQLEditor {
     constructor(containerId) {
@@ -62,7 +63,7 @@ export class SQLEditor {
         try {
             const newState = SQLParser.parse(sql);
             if (newState.tables.length === 0) {
-                if (!silent) alert('No valid CREATE TABLE statements found.');
+                if (!silent) notifications.show('No valid CREATE TABLE statements found.', 'error');
                 return;
             }
 
@@ -124,9 +125,10 @@ export class SQLEditor {
 
             // Clear visual engines via App event
             window.dispatchEvent(new CustomEvent('cloud-load', { detail: { state: newState } }));
+            if (!silent) notifications.show('SQL applied successfully', 'success');
         } catch (err) {
             console.error(err);
-            if (!silent) alert('Error parsing SQL: ' + err.message);
+            if (!silent) notifications.show('Error parsing SQL: ' + err.message, 'error');
         }
     }
 

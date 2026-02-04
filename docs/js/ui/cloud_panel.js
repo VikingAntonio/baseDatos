@@ -1,5 +1,6 @@
 import { stateManager } from '../state.js';
 import { SupabaseProvider } from '../storage/supabase_provider.js';
+import { notifications } from '../utils/notifications.js';
 
 export class CloudPanel {
     constructor() {
@@ -34,35 +35,23 @@ export class CloudPanel {
     initAuth() {
         const modal = document.getElementById('auth-modal');
         const loginBtn = document.getElementById('login-submit-btn');
-        const registerBtn = document.getElementById('register-submit-btn');
         const usernameInput = document.getElementById('username');
         const passwordInput = document.getElementById('password');
 
         loginBtn.onclick = async () => {
             const username = usernameInput.value;
             const password = passwordInput.value;
-            if (!username || !password) return alert('Fill all fields');
+            if (!username || !password) {
+                notifications.show('Fill all fields', 'error');
+                return;
+            }
 
             const { error } = await this.supabase.login(username, password);
             if (error) {
-                alert('Login failed: ' + error.message);
+                notifications.show('Login failed: ' + error.message, 'error');
             } else {
                 modal.classList.remove('active');
-                this.updateUserHeader();
-                this.refreshCloudProjects();
-            }
-        };
-
-        registerBtn.onclick = async () => {
-            const username = usernameInput.value;
-            const password = passwordInput.value;
-            if (!username || !password) return alert('Fill all fields');
-
-            const { error } = await this.supabase.register(username, password);
-            if (error) {
-                alert('Registration failed: ' + error.message);
-            } else {
-                modal.classList.remove('active');
+                notifications.show('Login successful', 'success');
                 this.updateUserHeader();
                 this.refreshCloudProjects();
             }
@@ -80,6 +69,7 @@ export class CloudPanel {
             `;
             document.getElementById('logout-btn').onclick = () => {
                 this.supabase.logout();
+                notifications.show('Logged out successfully', 'success');
                 this.updateUserHeader();
                 this.refreshCloudProjects();
             };
@@ -114,7 +104,7 @@ export class CloudPanel {
 
     async saveToCloud() {
         if (!this.supabase.getCurrentUser()) {
-            alert('Please login to save projects to the cloud');
+            notifications.show('Please login to save projects to the cloud', 'error');
             document.getElementById('auth-modal').classList.add('active');
             return;
         }
@@ -126,9 +116,9 @@ export class CloudPanel {
         const { error } = await this.supabase.saveProject(name, data);
         
         if (error) {
-            alert('Error saving to cloud: ' + error.message);
+            notifications.show('Error saving to cloud: ' + error.message, 'error');
         } else {
-            alert('Project saved successfully!');
+            notifications.show('Project saved successfully!', 'success');
             this.refreshCloudProjects();
         }
     }
@@ -169,12 +159,13 @@ export class CloudPanel {
         
         const { data, error } = await this.supabase.getProject(projectId);
         if (error) {
-            alert('Error loading project: ' + error.message);
+            notifications.show('Error loading project: ' + error.message, 'error');
             return;
         }
 
         if (data && data.data) {
             window.dispatchEvent(new CustomEvent('cloud-load', { detail: { state: data.data } }));
+            notifications.show('Project loaded successfully', 'success');
         }
     }
 }

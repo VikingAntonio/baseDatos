@@ -6,6 +6,7 @@ import { DragEngine } from './engine/drag.js';
 import { RelationsEngine } from './engine/relations.js';
 import { SQLEditor } from './ui/editor.js';
 import { StorageManager } from './utils/storage.js';
+import { notifications } from './utils/notifications.js';
 
 class App {
     constructor() {
@@ -83,7 +84,7 @@ class App {
             const elements = document.querySelectorAll('.table-node, .jtk-connector, .jtk-endpoint');
             
             if (document.querySelectorAll('.table-node').length === 0) {
-                alert('No tables to export');
+                notifications.show('No tables to export', 'error');
                 return;
             }
 
@@ -143,24 +144,11 @@ class App {
                 link.download = 'database_diagram.png';
                 link.href = dataUrl;
                 link.click();
+                notifications.show('Image exported successfully', 'success');
             } catch (err) {
                 console.error('Export failed', err);
-                alert('Export failed. Check console for details.');
+                notifications.show('Export failed. Check console for details.', 'error');
             }
-        };
-
-        document.getElementById('export-json').onclick = () => {
-            const data = JSON.stringify(stateManager.getState(), null, 2);
-            this.downloadFile(data, 'database_schema.json', 'application/json');
-        };
-
-        document.getElementById('export-sql').onclick = () => {
-            const sql = this.sqlEditor.getSQL();
-            this.downloadFile(sql, 'database_schema.sql', 'text/plain');
-        };
-
-        document.getElementById('import-btn').onclick = () => {
-            document.getElementById('import-input').click();
         };
 
         document.getElementById('import-input').onchange = (e) => {
@@ -171,9 +159,10 @@ class App {
                 try {
                     const json = JSON.parse(event.target.result);
                     this.loadFullState(json);
+                    notifications.show('Project imported successfully', 'success');
                 } catch (err) {
                     console.error(err);
-                    alert('Invalid JSON file');
+                    notifications.show('Invalid JSON file', 'error');
                 }
             };
             reader.readAsText(file);

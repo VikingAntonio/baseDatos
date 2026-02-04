@@ -13,9 +13,6 @@
             <div class="logo">
                 <img src="https://menutech.services/assets/img/logomt.png" alt="MenuTech Logo">
             </div>
-            <div id="user-info-header" class="user-info-header">
-                <!-- User info will be injected here -->
-            </div>
             <div class="header-center">
                 <div class="theme-switcher">
                     <button class="theme-btn" data-theme="light" title="Light Mode">☀️</button>
@@ -24,10 +21,10 @@
                 </div>
             </div>
             <div class="actions">
+                <div id="user-info-header" class="user-info-header">
+                    <!-- User info will be injected here -->
+                </div>
                 <button id="export-png" class="secondary-btn">Export PNG</button>
-                <button id="export-json" class="secondary-btn">Export JSON</button>
-                <button id="export-sql" class="secondary-btn">Export SQL</button>
-                <button id="import-btn" class="primary-btn">Import JSON</button>
                 <input type="file" id="import-input" style="display: none;">
             </div>
         </header>
@@ -120,10 +117,11 @@
             </div>
             <div class="modal-actions">
                 <button id="login-submit-btn" class="primary-btn">Login</button>
-                <button id="register-submit-btn" class="secondary-btn">Register</button>
             </div>
         </div>
     </div>
+
+    <div id="notification-container" class="notification-container"></div>
 
     <!-- App Scripts -->
     <script type="module" src="js/app.js"></script>

@@ -21,12 +21,76 @@ export class CloudPanel {
 
     init() {
         this.initDraggable();
+        this.initAuth();
         
         this.toggleBtn.onclick = () => this.toggleCollapse();
         this.refreshBtn.onclick = () => this.refreshCloudProjects();
         this.saveBtn.onclick = () => this.saveToCloud();
 
+        this.updateUserHeader();
         this.refreshCloudProjects();
+    }
+
+    initAuth() {
+        const modal = document.getElementById('auth-modal');
+        const loginBtn = document.getElementById('login-submit-btn');
+        const registerBtn = document.getElementById('register-submit-btn');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+
+        loginBtn.onclick = async () => {
+            const username = usernameInput.value;
+            const password = passwordInput.value;
+            if (!username || !password) return alert('Fill all fields');
+
+            const { error } = await this.supabase.login(username, password);
+            if (error) {
+                alert('Login failed: ' + error.message);
+            } else {
+                modal.classList.remove('active');
+                this.updateUserHeader();
+                this.refreshCloudProjects();
+            }
+        };
+
+        registerBtn.onclick = async () => {
+            const username = usernameInput.value;
+            const password = passwordInput.value;
+            if (!username || !password) return alert('Fill all fields');
+
+            const { error } = await this.supabase.register(username, password);
+            if (error) {
+                alert('Registration failed: ' + error.message);
+            } else {
+                modal.classList.remove('active');
+                this.updateUserHeader();
+                this.refreshCloudProjects();
+            }
+        };
+    }
+
+    updateUserHeader() {
+        const header = document.getElementById('user-info-header');
+        const user = this.supabase.getCurrentUser();
+
+        if (user) {
+            header.innerHTML = `
+                <span>👤 ${user.username}</span>
+                <a class="logout-link" id="logout-btn">Logout</a>
+            `;
+            document.getElementById('logout-btn').onclick = () => {
+                this.supabase.logout();
+                this.updateUserHeader();
+                this.refreshCloudProjects();
+            };
+        } else {
+            header.innerHTML = `
+                <button class="secondary-btn mini" id="show-login-btn">Login / Register</button>
+            `;
+            document.getElementById('show-login-btn').onclick = () => {
+                document.getElementById('auth-modal').classList.add('active');
+            };
+        }
     }
 
     initDraggable() {
@@ -49,6 +113,12 @@ export class CloudPanel {
     }
 
     async saveToCloud() {
+        if (!this.supabase.getCurrentUser()) {
+            alert('Please login to save projects to the cloud');
+            document.getElementById('auth-modal').classList.add('active');
+            return;
+        }
+
         const name = prompt('Enter project name:', 'My Database');
         if (!name) return;
 

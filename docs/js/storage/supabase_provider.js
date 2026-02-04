@@ -16,22 +16,6 @@ export class SupabaseProvider {
         this.currentUser = JSON.parse(localStorage.getItem('vdb_user')) || null;
     }
 
-    async register(username, password) {
-        if (!this.client) return { error: 'Supabase client not initialized' };
-
-        const { data, error } = await this.client
-            .from('bdd_users')
-            .insert([{ username, password: password }])
-            .select()
-            .single();
-
-        if (!error && data) {
-            this.currentUser = data;
-            localStorage.setItem('vdb_user', JSON.stringify(data));
-        }
-        return { data, error };
-    }
-
     async login(username, password) {
         if (!this.client) return { error: 'Supabase client not initialized' };
 

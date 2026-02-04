@@ -37,6 +37,14 @@ export class StateManager {
         this.listeners.forEach(listener => listener(this.state));
     }
 
+    clear() {
+        this.state = {
+            tables: [],
+            relations: []
+        };
+        this.notify();
+    }
+
     addTable(name, x = 100, y = 100) {
         const newTable = {
             id: generateUUID(),

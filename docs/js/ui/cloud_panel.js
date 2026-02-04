@@ -65,6 +65,57 @@ export class CloudPanel {
         };
     }
 
+    showPrompt(defaultValue = '') {
+        return new Promise((resolve) => {
+            const modal = document.getElementById('project-name-modal');
+            const input = document.getElementById('new-project-name');
+            const saveBtn = document.getElementById('project-name-submit-btn');
+            const cancelBtn = document.getElementById('project-name-cancel-btn');
+
+            input.value = defaultValue;
+            modal.classList.add('active');
+            input.focus();
+
+            const cleanup = (value) => {
+                modal.classList.remove('active');
+                saveBtn.onclick = null;
+                cancelBtn.onclick = null;
+                input.onkeydown = null;
+                resolve(value);
+            };
+
+            saveBtn.onclick = () => cleanup(input.value);
+            cancelBtn.onclick = () => cleanup(null);
+
+            input.onkeydown = (e) => {
+                if (e.key === 'Enter') cleanup(input.value);
+                if (e.key === 'Escape') cleanup(null);
+            };
+        });
+    }
+
+    showConfirm(message) {
+        return new Promise((resolve) => {
+            const modal = document.getElementById('confirm-modal');
+            const msgEl = document.getElementById('confirm-message');
+            const yesBtn = document.getElementById('confirm-yes-btn');
+            const noBtn = document.getElementById('confirm-no-btn');
+
+            msgEl.textContent = message;
+            modal.classList.add('active');
+
+            const cleanup = (value) => {
+                modal.classList.remove('active');
+                yesBtn.onclick = null;
+                noBtn.onclick = null;
+                resolve(value);
+            };
+
+            yesBtn.onclick = () => cleanup(true);
+            noBtn.onclick = () => cleanup(false);
+        });
+    }
+
     updateUserHeader() {
         const header = document.getElementById('user-info-header');
         const user = this.supabase.getCurrentUser();
@@ -116,7 +167,7 @@ export class CloudPanel {
             return;
         }
 
-        const name = prompt('Enter project name:', 'My Database');
+        const name = await this.showPrompt('My Database');
         if (!name) return;
 
         const data = stateManager.getState();
@@ -162,7 +213,7 @@ export class CloudPanel {
     }
 
     async loadFromCloud(projectId) {
-        if (!confirm('Load this project? Current unsaved changes might be lost.')) return;
+        if (!(await this.showConfirm('Load this project? Current unsaved changes might be lost.'))) return;
         
         const { data, error } = await this.supabase.getProject(projectId);
         if (error) {

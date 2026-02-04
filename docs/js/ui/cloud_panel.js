@@ -127,6 +127,7 @@ export class CloudPanel {
             `;
             document.getElementById('logout-btn').onclick = () => {
                 this.supabase.logout();
+                window.dispatchEvent(new CustomEvent('cloud-logout'));
                 notifications.show('Logged out successfully', 'success');
                 this.updateUserHeader();
                 this.refreshCloudProjects();

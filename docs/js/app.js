@@ -25,30 +25,8 @@ class App {
         
         this.initTheme();
 
-        // Load from storage
-        const savedState = this.storage.load();
-        if (savedState) {
-            stateManager.setState(savedState);
-        } else if (stateManager.getState().tables.length === 0) {
-            // Initial default state
-            const usersTable = stateManager.addTable('users', 100, 100);
-            const productsTable = stateManager.addTable('products', 450, 100);
-            const userIdCol = stateManager.addColumn(productsTable.id, { name: 'user_id', type: 'INT', fk: true });
-            
-            // Add initial relation
-            stateManager.addRelation({
-                fromTable: productsTable.id,
-                fromCol: userIdCol.id,
-                toTable: usersTable.id,
-                toCol: usersTable.columns[0].id,
-                type: '1:N'
-            });
-        }
-
-        // Auto-save
-        stateManager.subscribe((state) => {
-            this.storage.save(state);
-        });
+        // Removed localStorage auto-load and auto-save as per user request.
+        // Projects are now cloud-only.
 
         this.setupActions();
     }
@@ -171,12 +149,21 @@ class App {
         window.addEventListener('cloud-load', (e) => {
             this.loadFullState(e.detail.state);
         });
+
+        window.addEventListener('cloud-logout', () => {
+            this.clearCanvas();
+        });
     }
 
     loadFullState(state) {
+        this.clearCanvas();
+        stateManager.setState(state);
+    }
+
+    clearCanvas() {
         this.relationsEngine.clear();
         document.getElementById('canvas').innerHTML = '';
-        stateManager.setState(state);
+        stateManager.clear();
     }
 
     downloadFile(content, fileName, contentType) {

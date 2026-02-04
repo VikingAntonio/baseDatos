@@ -50,15 +50,19 @@ export class SupabaseProvider {
             .select('*')
             .eq('username', username)
             .eq('password', hashedPassword)
-            .single();
+            .maybeSingle();
 
-        if (!error && data) {
+        if (error) {
+            return { data: null, error };
+        }
+
+        if (data) {
             this.currentUser = data;
             localStorage.setItem('vdb_user', JSON.stringify(data));
-        } else if (!error && !data) {
-            return { error: { message: 'Invalid username or password' } };
+            return { data, error: null };
+        } else {
+            return { data: null, error: { message: 'Invalid username or password' } };
         }
-        return { data, error };
     }
 
     logout() {

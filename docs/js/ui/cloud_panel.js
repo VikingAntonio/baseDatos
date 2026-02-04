@@ -35,8 +35,15 @@ export class CloudPanel {
     initAuth() {
         const modal = document.getElementById('auth-modal');
         const loginBtn = document.getElementById('login-submit-btn');
+        const cancelBtn = document.getElementById('login-cancel-btn');
         const usernameInput = document.getElementById('username');
         const passwordInput = document.getElementById('password');
+
+        if (cancelBtn) {
+            cancelBtn.onclick = () => {
+                modal.classList.remove('active');
+            };
+        }
 
         loginBtn.onclick = async () => {
             const username = usernameInput.value;
@@ -75,7 +82,7 @@ export class CloudPanel {
             };
         } else {
             header.innerHTML = `
-                <button class="secondary-btn mini" id="show-login-btn">Login</button>
+                <button class="primary-btn" id="show-login-btn">Login</button>
             `;
             document.getElementById('show-login-btn').onclick = () => {
                 document.getElementById('auth-modal').classList.add('active');

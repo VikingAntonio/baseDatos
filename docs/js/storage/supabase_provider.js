@@ -16,21 +16,12 @@ export class SupabaseProvider {
         this.currentUser = JSON.parse(localStorage.getItem('vdb_user')) || null;
     }
 
-    async hashPassword(password) {
-        const msgUint8 = new TextEncoder().encode(password);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        return hashHex;
-    }
-
     async register(username, password) {
         if (!this.client) return { error: 'Supabase client not initialized' };
 
-        const hashedPassword = await this.hashPassword(password);
         const { data, error } = await this.client
             .from('bdd_users')
-            .insert([{ username, password: hashedPassword }])
+            .insert([{ username, password: password }])
             .select()
             .single();
 
@@ -44,12 +35,11 @@ export class SupabaseProvider {
     async login(username, password) {
         if (!this.client) return { error: 'Supabase client not initialized' };
 
-        const hashedPassword = await this.hashPassword(password);
         const { data, error } = await this.client
             .from('bdd_users')
             .select('*')
             .eq('username', username)
-            .eq('password', hashedPassword)
+            .eq('password', password)
             .maybeSingle();
 
         if (error) {

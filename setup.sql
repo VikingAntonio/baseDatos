@@ -7,7 +7,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE bdd_users (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     username TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL, -- Las contraseñas se almacenan como hashes SHA-256
+    password TEXT NOT NULL, -- Las contraseñas se almacenan como texto plano por ahora
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 

@@ -846,6 +846,35 @@ button.mini {
     touch-action: none;
 }
 
+/* Editable elements */
+[contenteditable="true"] {
+    outline: none;
+    transition: background-color 0.2s;
+    border-radius: 4px;
+    padding: 2px 4px;
+    margin: -2px -4px;
+}
+
+[contenteditable="true"]:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+[contenteditable="true"]:focus {
+    background-color: var(--input-bg);
+    box-shadow: 0 0 0 2px var(--accent-color);
+    color: var(--text-color);
+}
+
+.table-name[contenteditable="true"] {
+    min-width: 50px;
+    display: inline-block;
+}
+
+.col-name[contenteditable="true"], .col-type[contenteditable="true"] {
+    min-width: 30px;
+    display: inline-block;
+}
+
 /* Sidebar Toggle Buttons */
 .sidebar-toggle-btn {
     background: transparent;
@@ -919,40 +948,47 @@ button.mini {
 
 /* Right Sidebar Collapse */
 #right-sidebar {
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s;
     position: relative;
+    z-index: 10;
 }
 
 #right-sidebar.collapsed {
-    transform: translateX(calc(100% - 35px));
+    width: 64px;
+    padding: 10px;
+    overflow: hidden;
+}
+
+#right-sidebar.collapsed #properties-panel,
+#right-sidebar.collapsed #sql-preview-panel {
+    display: none;
+}
+
+#right-sidebar.collapsed .sidebar-header {
+    justify-content: center;
+}
+
+#right-sidebar.collapsed #toggle-right-sidebar {
+    transform: rotate(45deg);
 }
 
 #right-sidebar .sidebar-handle {
     display: none;
     position: absolute;
-    left: 0;
+    left: 20px;
     top: 50%;
     transform: translateY(-50%) rotate(-90deg);
-    transform-origin: bottom center;
-    background: var(--accent-color);
-    color: white;
-    padding: 8px 20px;
-    border-radius: 8px 8px 0 0;
-    cursor: pointer;
+    transform-origin: center;
+    color: var(--text-muted);
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.1em;
-    z-index: 5;
+    cursor: pointer;
     white-space: nowrap;
-    box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
 }
 
 #right-sidebar.collapsed .sidebar-handle {
     display: block;
-}
-
-#right-sidebar.collapsed #toggle-right-sidebar {
-    display: none;
 }
 
 /* Tablet Media Queries */

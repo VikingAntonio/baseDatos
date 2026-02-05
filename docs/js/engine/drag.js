@@ -13,7 +13,7 @@ export class DragEngine {
     initTableDrag() {
         interact('.table-node').draggable({
             allowFrom: '.table-header',
-            inertia: false,
+            inertia: true,
             modifiers: [
                 interact.modifiers.restrictRect({
                     restriction: '#canvas',
@@ -67,6 +67,7 @@ export class DragEngine {
     initTemplateDrag() {
         interact('#table-template').draggable({
             manualStart: true,
+            inertia: true,
             listeners: {
                 move: (event) => {
                     const target = event.target;

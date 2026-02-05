@@ -16,7 +16,24 @@ export class RelationsEngine {
                 EndpointStyle: { fill: '#fff', stroke: '#888', strokeWidth: 1 },
                 HoverPaintStyle: { stroke: '#f97316', strokeWidth: 3 },
                 EndpointHoverStyle: { fill: '#f97316' },
-                Container: 'canvas'
+                Container: 'canvas',
+                ConnectionOverlays: [
+                    ['Label', {
+                        label: '×',
+                        cssClass: 'delete-relation-btn',
+                        location: 0.5,
+                        events: {
+                            click: (labelOverlay, originalEvent) => {
+                                originalEvent.stopPropagation();
+                                const conn = labelOverlay.component;
+                                const relId = conn.getData().id;
+                                if (relId) {
+                                    stateManager.removeRelation(relId);
+                                }
+                            }
+                        }
+                    }]
+                ]
             });
 
             window.jsp = this.instance;

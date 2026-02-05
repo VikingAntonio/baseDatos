@@ -45,7 +45,7 @@ export class Canvas {
         const colContainer = tableEl.querySelector('.table-columns');
         Sortable.create(colContainer, {
             animation: 150,
-            handle: '.column-item',
+            handle: '.col-handle-left, .col-handle-right',
             onEnd: (evt) => {
                 const columnIds = Array.from(colContainer.querySelectorAll('.column-item')).map(el => el.id);
                 const table = stateManager.getState().tables.find(t => t.id === tableId);
@@ -90,6 +90,7 @@ export class Canvas {
         };
         nameEl.onclick = (e) => e.stopPropagation();
         nameEl.onmousedown = (e) => e.stopPropagation();
+        nameEl.ontouchstart = (e) => e.stopPropagation();
 
         div.querySelector('.delete-table-btn').onclick = (e) => {
             e.stopPropagation();
@@ -185,6 +186,8 @@ export class Canvas {
                     typeInput.onclick = (e) => e.stopPropagation();
                     nameInput.onmousedown = (e) => e.stopPropagation();
                     typeInput.onmousedown = (e) => e.stopPropagation();
+                    nameInput.ontouchstart = (e) => e.stopPropagation();
+                    typeInput.ontouchstart = (e) => e.stopPropagation();
 
                     // If content changed, endpoints might need re-positioning
                     if (window.jsp) window.jsp.revalidate(el);

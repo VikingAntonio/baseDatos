@@ -41,6 +41,46 @@ export class Sidebar {
             this.selectedColumnId = null;
             this.showRelationProperties(this.selectedRelationId);
         });
+
+        this.initCollapseControls();
+    }
+
+    initCollapseControls() {
+        const toggleLeft = document.getElementById('toggle-left-sidebar');
+        const toggleRight = document.getElementById('toggle-right-sidebar');
+        const rightHandle = document.getElementById('right-sidebar-handle');
+
+        if (toggleLeft) {
+            toggleLeft.onclick = () => {
+                this.leftSidebar.classList.toggle('collapsed');
+            };
+        }
+
+        if (toggleRight) {
+            toggleRight.onclick = () => {
+                this.rightSidebar.classList.toggle('collapsed');
+            };
+        }
+
+        if (rightHandle) {
+            rightHandle.onclick = () => {
+                this.rightSidebar.classList.remove('collapsed');
+            };
+        }
+
+        // Special behavior for New Table template when collapsed
+        const tableTemplate = document.getElementById('table-template');
+        if (tableTemplate) {
+            tableTemplate.addEventListener('click', () => {
+                if (this.leftSidebar.classList.contains('collapsed')) {
+                    // Add table at default center position
+                    const canvas = document.getElementById('canvas-container');
+                    const posX = canvas.scrollLeft + (canvas.clientWidth / 2) - 100;
+                    const posY = canvas.scrollTop + (canvas.clientHeight / 2) - 50;
+                    stateManager.addTable('new_table', posX, posY);
+                }
+            });
+        }
     }
 
     renderTablesList(state) {

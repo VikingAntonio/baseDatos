@@ -64,7 +64,7 @@ export class Sidebar {
 
         if (rightHandle) {
             rightHandle.onclick = () => {
-                this.rightSidebar.classList.remove('collapsed');
+                this.rightSidebar.classList.toggle('collapsed');
             };
         }
 

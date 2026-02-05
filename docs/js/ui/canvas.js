@@ -66,7 +66,7 @@ export class Canvas {
         div.style.top = `${table.posY}px`;
         div.innerHTML = `
             <div class="table-header">
-                <span class="table-name">${table.name}</span>
+                <span class="table-name" contenteditable="true" spellcheck="false">${table.name}</span>
                 <button class="delete-table-btn">×</button>
             </div>
             <div class="table-columns"></div>
@@ -78,6 +78,19 @@ export class Canvas {
         this.updateTableElement(div, table);
 
         // Events
+        const nameEl = div.querySelector('.table-name');
+        nameEl.onblur = () => {
+            stateManager.updateTable(table.id, { name: nameEl.textContent });
+        };
+        nameEl.onkeydown = (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                nameEl.blur();
+            }
+        };
+        nameEl.onclick = (e) => e.stopPropagation();
+        nameEl.onmousedown = (e) => e.stopPropagation();
+
         div.querySelector('.delete-table-btn').onclick = (e) => {
             e.stopPropagation();
             stateManager.removeTable(table.id);
@@ -97,7 +110,10 @@ export class Canvas {
     }
 
     updateTableElement(el, table) {
-        el.querySelector('.table-name').textContent = table.name;
+        const nameEl = el.querySelector('.table-name');
+        if (document.activeElement !== nameEl) {
+            nameEl.textContent = table.name;
+        }
         
         if (!el.classList.contains('dragging')) {
             el.style.left = `${table.posX}px`;
@@ -134,18 +150,45 @@ export class Canvas {
                 ${col.fk ? '<span class="fk-icon">🔗</span>' : ''}
             `;
             
-            const content = `
-                <div class="col-handle-left"></div>
-                <div class="col-handle-right"></div>
-                <span class="col-icons">${iconsHTML}</span>
-                <span class="col-name">${col.name}</span>
-                <span class="col-type">${col.type}</span>
-            `;
+            const colNameEl = colEl.querySelector('.col-name');
+            const colTypeEl = colEl.querySelector('.col-type');
 
-            if (colEl.innerHTML !== content) {
-                colEl.innerHTML = content;
-                // If content changed, endpoints might need re-positioning
-                if (window.jsp) window.jsp.revalidate(el);
+            if (document.activeElement !== colNameEl && document.activeElement !== colTypeEl) {
+                const content = `
+                    <div class="col-handle-left"></div>
+                    <div class="col-handle-right"></div>
+                    <span class="col-icons">${iconsHTML}</span>
+                    <span class="col-name" contenteditable="true" spellcheck="false">${col.name}</span>
+                    <span class="col-type" contenteditable="true" spellcheck="false">${col.type}</span>
+                `;
+
+                if (colEl.innerHTML !== content) {
+                    colEl.innerHTML = content;
+
+                    // Attach event listeners after setting innerHTML
+                    const nameInput = colEl.querySelector('.col-name');
+                    const typeInput = colEl.querySelector('.col-type');
+
+                    nameInput.onblur = () => stateManager.updateColumn(table.id, col.id, { name: nameInput.textContent });
+                    typeInput.onblur = () => stateManager.updateColumn(table.id, col.id, { type: typeInput.textContent });
+
+                    const handleKey = (e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            e.target.blur();
+                        }
+                    };
+                    nameInput.onkeydown = handleKey;
+                    typeInput.onkeydown = handleKey;
+
+                    nameInput.onclick = (e) => e.stopPropagation();
+                    typeInput.onclick = (e) => e.stopPropagation();
+                    nameInput.onmousedown = (e) => e.stopPropagation();
+                    typeInput.onmousedown = (e) => e.stopPropagation();
+
+                    // If content changed, endpoints might need re-positioning
+                    if (window.jsp) window.jsp.revalidate(el);
+                }
             }
 
             colEl.onclick = (e) => {

@@ -512,6 +512,31 @@ button.danger {
 .pk-icon { color: #f59e0b; }
 .fk-icon { color: #f97316; }
 
+.delete-relation-btn {
+    background-color: var(--table-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    cursor: pointer;
+    z-index: 100;
+    transition: all 0.2s;
+    font-weight: bold;
+    user-select: none;
+}
+
+.delete-relation-btn:hover {
+    background-color: var(--danger-color);
+    color: white;
+    border-color: var(--danger-color);
+    transform: scale(1.2);
+}
+
 .jtk-connector path {
     stroke-dasharray: 0;
     transition: stroke 0.2s, stroke-width 0.2s;
